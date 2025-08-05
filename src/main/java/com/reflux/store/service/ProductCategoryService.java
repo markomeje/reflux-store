@@ -1,6 +1,8 @@
 package com.reflux.store.service;
 import com.reflux.store.model.ProductCategory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +14,22 @@ public class ProductCategoryService implements ProductCategoryServiceInterface {
 
     @Override
     public List<ProductCategory> getCategoryList() {
-        return this.categories;
+        return categories;
     }
 
     @Override
     public void createCategory(ProductCategory category) {
-        this.categories.add(category);
+        categories.add(category);
+    }
+
+    @Override
+    public String deleteCategory(Long id) {
+        ProductCategory category = categories.stream()
+                .filter(c -> c.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category Not Found"));
+
+        categories.remove(category);
+        return "Category Deleted Successfully";
     }
 }

@@ -6,4 +6,6 @@ public interface ProductCategoryServiceInterface {
     List<ProductCategory> getCategoryList();
 
     void createCategory(ProductCategory category);
+
+    String deleteCategory(Long id);
 }
