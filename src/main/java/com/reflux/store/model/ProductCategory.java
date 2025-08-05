@@ -1,12 +1,24 @@
 package com.reflux.store.model;
 
+import jakarta.persistence.*;
+
+@Entity
 public class ProductCategory {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false)
     private Long id;
+
     private String name;
 
     public ProductCategory(Long id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public ProductCategory() {
+
     }
 
     public Long getId() {
