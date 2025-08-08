@@ -8,4 +8,6 @@ public interface ProductCategoryServiceInterface {
     void createCategory(ProductCategory category);
 
     String deleteCategory(Long id);
+
+    void updateCategory(ProductCategory category, Long id);
 }

@@ -1,10 +1,10 @@
 package com.reflux.store.controller;
 import com.reflux.store.model.ProductCategory;
 import com.reflux.store.service.ProductCategoryService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
 
 @RestController
@@ -12,7 +12,6 @@ import java.util.List;
 public class ProductCategoryController {
 
     private final ProductCategoryService categoryService;
-    private Long categoryId;
 
     public ProductCategoryController(ProductCategoryService categoryService) {
         this.categoryService = categoryService;
@@ -25,7 +24,6 @@ public class ProductCategoryController {
 
     @PostMapping("/create")
     public String createCategory(@RequestBody ProductCategory category) {
-        category.setId(categoryId++);
         categoryService.createCategory(category);
         return "Category Created Successfully";
     }
@@ -39,4 +37,15 @@ public class ProductCategoryController {
             return new ResponseEntity<String>(e.getReason(), e.getStatusCode());
         }
     }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updateCategory(@RequestBody ProductCategory category, @PathVariable Long id) {
+        try {
+            categoryService.updateCategory(category, id);
+            return ResponseEntity.ok(HttpStatus.OK.name());
+        }catch (ResponseStatusException e) {
+            return new ResponseEntity<String>(e.getReason(), e.getStatusCode());
+        }
+    }
+
 }

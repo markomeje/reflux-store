@@ -6,10 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class RefluxStoreApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(RefluxStoreApplication.class, args);
+    public static void main(String[] args) {
+        SpringApplication.run(RefluxStoreApplication.class, args);
 
-		System.out.println("RefluxStoreApplication started");
-	}
+        System.out.println("RefluxStoreApplication started");
+    }
 
 }
