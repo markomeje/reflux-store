@@ -1,10 +1,14 @@
-package com.reflux.store.controller;
-import com.reflux.store.model.ProductCategory;
-import com.reflux.store.service.ProductCategoryService;
+package com.reflux.store.controllers;
+import com.reflux.store.models.ProductCategory;
+import com.reflux.store.services.ProductCategoryService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 
 @RestController
@@ -23,7 +27,7 @@ public class ProductCategoryController {
     }
 
     @PostMapping("/create")
-    public String createCategory(@RequestBody ProductCategory category) {
+    public String createCategory(@Valid @RequestBody ProductCategory category) {
         categoryService.createCategory(category);
         return "Category Created Successfully";
     }

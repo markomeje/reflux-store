@@ -1,5 +1,5 @@
-package com.reflux.store.service;
-import com.reflux.store.model.ProductCategory;
+package com.reflux.store.services;
+import com.reflux.store.models.ProductCategory;
 import java.util.List;
 
 public interface ProductCategoryServiceInterface {
