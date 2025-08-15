@@ -1,6 +1,9 @@
 package com.reflux.store.services;
 import com.reflux.store.models.ProductCategory;
+import com.reflux.store.payload.ProductCategoryDto;
+import com.reflux.store.payload.ProductCategoryResponse;
 import com.reflux.store.repositories.ProductCategoryRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -11,13 +14,23 @@ public class ProductCategoryService implements ProductCategoryServiceInterface {
 
     private final ProductCategoryRepository productCategoryRepository;
 
-    public ProductCategoryService (ProductCategoryRepository productCategoryRepository) {
+    private ModelMapper modelMapper;
+
+    public ProductCategoryService (ProductCategoryRepository productCategoryRepository, ModelMapper modelMapper) {
         this.productCategoryRepository = productCategoryRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
-    public List<ProductCategory> getCategoryList() {
-        return productCategoryRepository.findAll();
+    public ProductCategoryResponse getCategoryList() {
+        List<ProductCategory> categories = productCategoryRepository.findAll();
+        List<ProductCategoryDto> categoryDtos = categories.stream()
+            .map(category -> modelMapper.map(category, ProductCategoryDto.class))
+            .toList();
+
+        ProductCategoryResponse productCategoryResponse = new ProductCategoryResponse();
+        productCategoryResponse.setContent(categoryDtos);
+        return productCategoryResponse;
     }
 
     @Override

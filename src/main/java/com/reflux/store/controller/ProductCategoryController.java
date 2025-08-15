@@ -1,12 +1,11 @@
-package com.reflux.store.controllers;
+package com.reflux.store.controller;
 import com.reflux.store.models.ProductCategory;
+import com.reflux.store.payload.ProductCategoryResponse;
 import com.reflux.store.services.ProductCategoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/product/category")
@@ -19,9 +18,9 @@ public class ProductCategoryController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<ProductCategory>> getCategoryList() {
-        List<ProductCategory> categories = categoryService.getCategoryList();
-        return new ResponseEntity<>(categories, HttpStatus.OK);
+    public ResponseEntity<ProductCategoryResponse> getCategoryList() {
+        ProductCategoryResponse productCategoryResponse = categoryService.getCategoryList();
+        return new ResponseEntity<>(productCategoryResponse, HttpStatus.OK);
     }
 
     @PostMapping("/create")

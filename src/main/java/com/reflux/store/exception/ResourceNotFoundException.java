@@ -1,4 +1,4 @@
-package com.reflux.store.exceptions;
+package com.reflux.store.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
 

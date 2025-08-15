@@ -1,4 +1,4 @@
-package com.reflux.store.exceptions;
+package com.reflux.store.exception;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> invalidArgumentException(MethodArgumentNotValidException e) {
         Map<String, String> result = new HashMap<>();
-        
+
         e.getBindingResult().getAllErrors().forEach(error -> {
             String field = ((FieldError)error).getField();
             String message = error.getDefaultMessage();
