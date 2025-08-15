@@ -22,6 +22,11 @@ public class ProductCategoryService implements ProductCategoryServiceInterface {
 
     @Override
     public void createCategory(ProductCategory category) {
+        ProductCategory savedCategory = productCategoryRepository.findByName(category.getName());
+        if(savedCategory != null) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Category name already exists");
+        }
+
         productCategoryRepository.save(category);
     }
 
