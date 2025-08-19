@@ -9,4 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProductCategoryResponse {
     private List<ProductCategoryDto> content;
+    private Integer page;
+    private Integer size;
+    private Long totalElements;
+    private Integer totalPages;
+    private boolean lastPage;
 }

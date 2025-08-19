@@ -1,5 +1,6 @@
 package com.reflux.store.controller;
-import com.reflux.store.models.ProductCategory;
+import com.reflux.store.config.AppConstants;
+import com.reflux.store.payload.ProductCategoryDto;
 import com.reflux.store.payload.ProductCategoryResponse;
 import com.reflux.store.services.ProductCategoryService;
 import jakarta.validation.Valid;
@@ -18,27 +19,30 @@ public class ProductCategoryController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<ProductCategoryResponse> getCategoryList() {
-        ProductCategoryResponse productCategoryResponse = categoryService.getCategoryList();
+    public ResponseEntity<ProductCategoryResponse> getCategories(
+        @RequestParam(name = "page", defaultValue = AppConstants.PAGE_NUMBER, required = false)
+        Integer page
+    ) {
+        ProductCategoryResponse productCategoryResponse = categoryService.getCategories(page);
         return new ResponseEntity<>(productCategoryResponse, HttpStatus.OK);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createCategory(@Valid @RequestBody ProductCategory category) {
-        categoryService.createCategory(category);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Category Created Successfully");
+    public ResponseEntity<ProductCategoryDto> createCategory(@Valid @RequestBody ProductCategoryDto productCategoryDto) {
+        ProductCategoryDto savedProductCategoryDto = categoryService.createCategory(productCategoryDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedProductCategoryDto);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteCategory(@PathVariable Long id) {
-        String status = categoryService.deleteCategory(id);
-        return ResponseEntity.ok(status);
+    public ResponseEntity<ProductCategoryDto> deleteCategory(@PathVariable Long id) {
+        ProductCategoryDto deletedCategory = categoryService.deleteCategory(id);
+        return ResponseEntity.status(HttpStatus.OK).body(deletedCategory);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateCategory(@Valid @RequestBody ProductCategory category, @PathVariable Long id) {
-        categoryService.updateCategory(category, id);
-        return ResponseEntity.ok(HttpStatus.OK.name());
+    public ResponseEntity<ProductCategoryDto> updateCategory(@Valid @RequestBody ProductCategoryDto productCategoryDto, @PathVariable Long id) {
+        ProductCategoryDto savedCategory = categoryService.updateCategory(productCategoryDto, id);
+        return ResponseEntity.status(HttpStatus.OK).body(savedCategory);
     }
 
 }
