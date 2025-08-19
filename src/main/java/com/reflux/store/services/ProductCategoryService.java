@@ -64,7 +64,7 @@ public class ProductCategoryService implements ProductCategoryServiceInterface {
     @Override
     public ProductCategoryDto deleteCategory(Long id) {
         ProductCategory existingCategory = productCategoryRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category Not Found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Category Not Found"));
 
         productCategoryRepository.delete(existingCategory);
         return modelMapper.map(existingCategory, ProductCategoryDto.class);

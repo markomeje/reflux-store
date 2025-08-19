@@ -3,6 +3,7 @@ package com.reflux.store.exception;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.reflux.store.payload.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -28,7 +29,16 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<String> resourceNotFoundException(ResourceNotFoundException e) {
-        return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ApiResponse> resourceNotFoundException(ResourceNotFoundException e) {
+        String message = e.getMessage();
+        ApiResponse response = new ApiResponse(message, false);
+        return new ResponseEntity<ApiResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ApiException.class)
+    public ResponseEntity<ApiResponse> apiException(ApiException e) {
+        String message = e.getMessage();
+        ApiResponse response = new ApiResponse(message, false);
+        return new ResponseEntity<ApiResponse>(response, HttpStatus.BAD_REQUEST);
     }
 }
