@@ -1,7 +1,7 @@
 package com.reflux.store.controller;
 import com.reflux.store.config.AppConstants;
-import com.reflux.store.payload.ProductCategoryDto;
-import com.reflux.store.payload.ProductCategoryResponse;
+import com.reflux.store.dto.product.ProductCategoryDto;
+import com.reflux.store.response.product.ProductCategoryResponse;
 import com.reflux.store.services.ProductCategoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

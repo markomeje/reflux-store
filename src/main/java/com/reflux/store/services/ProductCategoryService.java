@@ -1,15 +1,14 @@
 package com.reflux.store.services;
+import com.reflux.store.exception.ApiException;
 import com.reflux.store.exception.ResourceNotFoundException;
 import com.reflux.store.models.ProductCategory;
-import com.reflux.store.payload.ProductCategoryDto;
-import com.reflux.store.payload.ProductCategoryResponse;
+import com.reflux.store.dto.product.ProductCategoryDto;
+import com.reflux.store.response.product.ProductCategoryResponse;
 import com.reflux.store.repositories.ProductCategoryRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Service
@@ -19,7 +18,7 @@ public class ProductCategoryService implements ProductCategoryServiceInterface {
 
     private final ModelMapper modelMapper;
 
-    public ProductCategoryService (ProductCategoryRepository productCategoryRepository, ModelMapper modelMapper) {
+    public ProductCategoryService(ProductCategoryRepository productCategoryRepository, ModelMapper modelMapper) {
         this.productCategoryRepository = productCategoryRepository;
         this.modelMapper = modelMapper;
     }
@@ -54,7 +53,7 @@ public class ProductCategoryService implements ProductCategoryServiceInterface {
 
         ProductCategory existingCategory = productCategoryRepository.findByName(productCategoryDto.getName());
         if(existingCategory != null) {
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Category name already exists");
+            throw new ApiException("Category name already exists");
         }
 
         ProductCategory savedCategory =  productCategoryRepository.save(category);

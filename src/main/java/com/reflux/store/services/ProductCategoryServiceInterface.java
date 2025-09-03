@@ -1,6 +1,6 @@
 package com.reflux.store.services;
-import com.reflux.store.payload.ProductCategoryDto;
-import com.reflux.store.payload.ProductCategoryResponse;
+import com.reflux.store.dto.product.ProductCategoryDto;
+import com.reflux.store.response.product.ProductCategoryResponse;
 
 public interface ProductCategoryServiceInterface {
     ProductCategoryResponse getCategories(Integer page);

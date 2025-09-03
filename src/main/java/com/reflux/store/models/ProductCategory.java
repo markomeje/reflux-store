@@ -1,13 +1,11 @@
 package com.reflux.store.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
-@Data
 @Entity
 public class ProductCategory {
 

@@ -1,4 +1,4 @@
-package com.reflux.store.payload;
+package com.reflux.store.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
