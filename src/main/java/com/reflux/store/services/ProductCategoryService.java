@@ -1,6 +1,7 @@
 package com.reflux.store.services;
 import com.reflux.store.exception.ApiException;
 import com.reflux.store.exception.ResourceNotFoundException;
+import com.reflux.store.interfaces.ProductCategoryServiceInterface;
 import com.reflux.store.models.ProductCategory;
 import com.reflux.store.dto.product.ProductCategoryDto;
 import com.reflux.store.response.product.ProductCategoryResponse;

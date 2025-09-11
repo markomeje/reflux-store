@@ -1,4 +1,4 @@
-package com.reflux.store.services;
+package com.reflux.store.interfaces;
 import com.reflux.store.dto.product.ProductCategoryDto;
 import com.reflux.store.response.product.ProductCategoryResponse;
 

@@ -1,6 +1,7 @@
 package com.reflux.store.services;
 import com.reflux.store.dto.product.ProductDto;
 import com.reflux.store.exception.ResourceNotFoundException;
+import com.reflux.store.interfaces.ProductServiceInterface;
 import com.reflux.store.models.Product;
 import com.reflux.store.models.ProductCategory;
 import com.reflux.store.repositories.ProductCategoryRepository;
@@ -27,6 +28,7 @@ public class ProductService implements ProductServiceInterface {
         this.productRepository = productRepository;
     }
 
+    @Override
     public ProductResponse getProducts() {
         List<Product> products = productRepository.findAll();
         List<ProductDto> productDtos = products.stream()
@@ -38,6 +40,7 @@ public class ProductService implements ProductServiceInterface {
         return productResponse;
     }
 
+    @Override
     public ProductDto createProduct(Product product, Long productCategoryId) {
         ProductCategory productCategory = productCategoryRepository.findById(productCategoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product category not found"));
@@ -52,6 +55,7 @@ public class ProductService implements ProductServiceInterface {
         return modelMapper.map(savedProduct, ProductDto.class);
     }
 
+    @Override
     public ProductResponse getProductsByCategory(Long productCategoryId) {
         ProductCategory category =  productCategoryRepository.findById(productCategoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product category not found"));
@@ -65,4 +69,28 @@ public class ProductService implements ProductServiceInterface {
         productResponse.setContent(productDtos);
         return productResponse;
     }
+
+    @Override
+    public ProductResponse searchProductsByKeyword(String keyword) {
+
+        List<Product> products = productRepository.findByNameLikeIgnoreCase(keyword);
+        List<ProductDto> productDtos = products.stream()
+                .map(product -> modelMapper.map(product, ProductDto.class))
+                .toList();
+
+        ProductResponse  productResponse = new ProductResponse();
+        productResponse.setContent(productDtos);
+        return productResponse;
+    }
+
+    @Override
+    public ProductDto updateProduct(Long productId, ProductDto productDto) {
+        Product existingProduct = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Productß not found"));
+
+        productRepository.save(existingProduct);
+        return modelMapper.map(existingProduct, ProductDto.class);
+    }
+
+
 }
