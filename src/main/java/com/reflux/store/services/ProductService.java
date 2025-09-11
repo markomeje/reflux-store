@@ -7,8 +7,12 @@ import com.reflux.store.models.ProductCategory;
 import com.reflux.store.repositories.ProductCategoryRepository;
 import com.reflux.store.repositories.ProductRepository;
 import com.reflux.store.response.product.ProductResponse;
+import com.reflux.store.utility.FileUploader;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -17,6 +21,8 @@ public class ProductService implements ProductServiceInterface {
     private final ProductCategoryRepository productCategoryRepository;
     private final ModelMapper modelMapper;
     private final ProductRepository productRepository;
+    @Value("${project.image.path}")
+    private String path;
 
     public ProductService(
         ModelMapper modelMapper,
@@ -72,7 +78,6 @@ public class ProductService implements ProductServiceInterface {
 
     @Override
     public ProductResponse searchProductsByKeyword(String keyword) {
-
         List<Product> products = productRepository.findByNameLikeIgnoreCase(keyword);
         List<ProductDto> productDtos = products.stream()
                 .map(product -> modelMapper.map(product, ProductDto.class))
@@ -85,11 +90,38 @@ public class ProductService implements ProductServiceInterface {
 
     @Override
     public ProductDto updateProduct(Long productId, ProductDto productDto) {
-        Product existingProduct = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Productß not found"));
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
-        productRepository.save(existingProduct);
-        return modelMapper.map(existingProduct, ProductDto.class);
+        product.setName(productDto.getName());
+        product.setPrice(productDto.getPrice());
+        product.setSpecialPrice(productDto.getSpecialPrice());
+        product.setDiscount(productDto.getDiscount());
+        product.setDescription(productDto.getDescription());
+        product.setQuantity(productDto.getQuantity());
+
+        productRepository.save(product);
+        return modelMapper.map(product, ProductDto.class);
+    }
+
+    @Override
+    public ProductDto deleteProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
+        productRepository.delete(product);
+        return modelMapper.map(product, ProductDto.class);
+    }
+
+    @Override
+    public ProductDto updateProductImage(Long productId, MultipartFile image) throws IOException {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
+        String filename = FileUploader.uploadImage(path, image);
+        product.setImage(filename);
+        Product updatedProduct = productRepository.save(product);
+        return modelMapper.map(updatedProduct, ProductDto.class);
     }
 
 
