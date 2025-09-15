@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import java.util.List;
 
 @Setter
 @Getter
@@ -16,5 +17,8 @@ public class ProductCategory {
 
     @NotBlank(message = "Category name cannot be blank")
     private String name;
+
+    @OneToMany(mappedBy = "productCategory", cascade = CascadeType.ALL)
+    private List<Product> products;
 
 }

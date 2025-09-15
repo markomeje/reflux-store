@@ -1,5 +1,6 @@
 package com.reflux.store.services;
 import com.reflux.store.dto.product.ProductDto;
+import com.reflux.store.exception.ApiException;
 import com.reflux.store.exception.ResourceNotFoundException;
 import com.reflux.store.interfaces.ProductServiceInterface;
 import com.reflux.store.models.Product;
@@ -10,6 +11,10 @@ import com.reflux.store.response.product.ProductResponse;
 import com.reflux.store.utility.FileUploader;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -21,6 +26,7 @@ public class ProductService implements ProductServiceInterface {
     private final ProductCategoryRepository productCategoryRepository;
     private final ModelMapper modelMapper;
     private final ProductRepository productRepository;
+
     @Value("${project.image.path}")
     private String path;
 
@@ -35,29 +41,44 @@ public class ProductService implements ProductServiceInterface {
     }
 
     @Override
-    public ProductResponse getProducts() {
-        List<Product> products = productRepository.findAll();
+    public ProductResponse getProducts(Integer page, Integer limit, String sortOrder, String sortBy) {
+        Sort sort = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, limit, sort);
+        Page<Product> pageProducts = productRepository.findAll(pageable);
+
+        List<Product> products = pageProducts.getContent();
         List<ProductDto> productDtos = products.stream()
                 .map(product -> modelMapper.map(product, ProductDto.class))
                 .toList();
 
         ProductResponse  productResponse = new ProductResponse();
         productResponse.setContent(productDtos);
+        productResponse.setPageNumber(pageProducts.getNumber());
+        productResponse.setPageSize(pageProducts.getSize());
+        productResponse.setTotalElements(pageProducts.getTotalElements());
+        productResponse.setTotalPages(pageProducts.getTotalPages());
+        productResponse.setLastPage(pageProducts.isLast());
         return productResponse;
     }
 
     @Override
-    public ProductDto createProduct(Product product, Long productCategoryId) {
-        ProductCategory productCategory = productCategoryRepository.findById(productCategoryId)
+    public ProductDto createProduct(ProductDto productDto, Long productCategoryId) {
+        Product productExists = productRepository.findByName(productDto.getName());
+        if (productExists != null) {
+            throw new ApiException("Product already exists");
+        }
+
+        productCategoryRepository.findById(productCategoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product category not found"));
 
-        product.setProductCategory(productCategory);
-        double discount = (product.getDiscount() * 0.01) * product.getPrice();
-        double specialPrice = Math.round(product.getPrice() - discount);
-        product.setSpecialPrice(specialPrice);
-        product.setImage("product.png");
+        productDto.setProductCategoryId(productCategoryId);
+        double discount = (productDto.getDiscount() * 0.01) * productDto.getPrice();
+        double specialPrice = Math.round(productDto.getPrice() - discount);
+        productDto.setSpecialPrice(specialPrice);
+        productDto.setImage("product.png");
 
-        Product savedProduct = productRepository.save(product);
+        Product newProduct = modelMapper.map(productDto, Product.class);
+        Product savedProduct = productRepository.save(newProduct);
         return modelMapper.map(savedProduct, ProductDto.class);
     }
 

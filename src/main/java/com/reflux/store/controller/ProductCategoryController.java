@@ -1,5 +1,5 @@
 package com.reflux.store.controller;
-import com.reflux.store.config.AppConstants;
+import com.reflux.store.config.PaginationConstants;
 import com.reflux.store.dto.product.ProductCategoryDto;
 import com.reflux.store.response.product.ProductCategoryResponse;
 import com.reflux.store.services.ProductCategoryService;
@@ -20,7 +20,7 @@ public class ProductCategoryController {
 
     @GetMapping("/list")
     public ResponseEntity<ProductCategoryResponse> getCategories(
-        @RequestParam(name = "page", defaultValue = AppConstants.PAGE_NUMBER, required = false)
+        @RequestParam(name = "page", defaultValue = PaginationConstants.PAGE_NUMBER, required = false)
         Integer page
     ) {
         ProductCategoryResponse productCategoryResponse = categoryService.getCategories(page);

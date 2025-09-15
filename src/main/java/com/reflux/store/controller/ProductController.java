@@ -1,13 +1,13 @@
 package com.reflux.store.controller;
+import com.reflux.store.config.PaginationConstants;
 import com.reflux.store.dto.product.ProductDto;
-import com.reflux.store.models.Product;
 import com.reflux.store.response.product.ProductResponse;
 import com.reflux.store.services.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 
 @RestController
@@ -15,20 +15,28 @@ import java.io.IOException;
 public class ProductController {
 
     private final ProductService productService;
-
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
     @PostMapping("/{productCategoryId}/create")
-    public ResponseEntity<ProductDto> createProduct(@RequestBody Product product, @PathVariable Long productCategoryId) {
-        ProductDto productDto = productService.createProduct(product, productCategoryId);
-        return new ResponseEntity<>(productDto, HttpStatus.CREATED);
+    public ResponseEntity<ProductDto> createProduct(
+        @Valid
+        @RequestBody ProductDto productDto,
+        @PathVariable Long productCategoryId
+    ) {
+        ProductDto newProduct = productService.createProduct(productDto, productCategoryId);
+        return new ResponseEntity<>(newProduct, HttpStatus.CREATED);
     }
 
     @GetMapping("/list")
-    public ResponseEntity<ProductResponse> getProducts() {
-        ProductResponse  productResponse = productService.getProducts();
+    public ResponseEntity<ProductResponse> getProducts(
+        @RequestParam(name = "page", defaultValue = PaginationConstants.PAGE_NUMBER, required = false) Integer page,
+        @RequestParam(name = "limit", defaultValue = PaginationConstants.PAGE_SIZE, required = false) Integer limit,
+        @RequestParam(name = "sortOrder", defaultValue = PaginationConstants.SORT_ORDER, required = false) String sortOrder,
+        @RequestParam(name = "sortBy", defaultValue = PaginationConstants.SORT_BY, required = false) String sortBy
+    ) {
+        ProductResponse  productResponse = productService.getProducts(page, limit, sortOrder, sortBy);
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
@@ -45,7 +53,11 @@ public class ProductController {
     }
 
     @PutMapping("/update/{productId}")
-    public ResponseEntity<ProductDto> updateProduct(@PathVariable Long productId, @RequestBody ProductDto productDto) {
+    public ResponseEntity<ProductDto> updateProduct(
+        @Valid
+        @PathVariable Long productId,
+        @RequestBody ProductDto productDto
+    ) {
         ProductDto updatedProduct = productService.updateProduct(productId, productDto);
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }
@@ -57,7 +69,11 @@ public class ProductController {
     }
 
     @PutMapping("/{productId}/update-image")
-    public ResponseEntity<ProductDto> updateProductImage(@PathVariable Long productId, @RequestParam("image") MultipartFile image) throws IOException {
+    public ResponseEntity<ProductDto> updateProductImage(
+        @Valid
+        @PathVariable Long productId,
+        @RequestParam("image") MultipartFile image
+    ) throws IOException {
         ProductDto updatedProduct = productService.updateProductImage(productId, image);
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }

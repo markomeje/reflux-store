@@ -1,5 +1,4 @@
 package com.reflux.store;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -8,8 +7,7 @@ public class RefluxStoreApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(RefluxStoreApplication.class, args);
-
-        System.out.println("RefluxStoreApplication started");
+        System.out.println("Reflux Store Application started");
     }
 
 }
