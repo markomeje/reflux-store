@@ -8,7 +8,7 @@ import com.reflux.store.models.ProductCategory;
 import com.reflux.store.repositories.ProductCategoryRepository;
 import com.reflux.store.repositories.ProductRepository;
 import com.reflux.store.response.product.ProductResponse;
-import com.reflux.store.utility.FileUploader;
+import com.reflux.store.handler.FileHandler;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -139,7 +139,7 @@ public class ProductService implements ProductServiceInterface {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
-        String filename = FileUploader.uploadImage(path, image);
+        String filename = FileHandler.uploadImage(path, image);
         product.setImage(filename);
         Product updatedProduct = productRepository.save(product);
         return modelMapper.map(updatedProduct, ProductDto.class);

@@ -1,4 +1,4 @@
-package com.reflux.store.utility;
+package com.reflux.store.handler;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
@@ -6,7 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-public class FileUploader {
+public class FileHandler {
 
     public static String uploadImage(String path, MultipartFile file) throws IOException {
         String originalFilename = file.getOriginalFilename();
@@ -21,7 +21,10 @@ public class FileUploader {
 
         File folder = new File(path);
         if (!folder.exists()) {
-            folder.mkdirs();
+            boolean dirs = folder.mkdirs();
+            if (!dirs) {
+                throw new IOException("Invalid file directories");
+            }
         }
 
         Files.copy(file.getInputStream(), Paths.get(filePath));

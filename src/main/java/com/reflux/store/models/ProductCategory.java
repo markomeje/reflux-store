@@ -18,7 +18,7 @@ public class ProductCategory {
     @NotBlank(message = "Category name cannot be blank")
     private String name;
 
-    @OneToMany(mappedBy = "productCategory", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Product> products;
 
 }
