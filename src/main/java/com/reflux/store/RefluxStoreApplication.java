@@ -7,7 +7,7 @@ public class RefluxStoreApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(RefluxStoreApplication.class, args);
-        System.out.println("Reflux Store Application started");
+        System.out.println("Reflux Store Application Started");
     }
 
 }

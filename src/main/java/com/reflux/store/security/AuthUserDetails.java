@@ -1,0 +1,105 @@
+package com.reflux.store.security;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.reflux.store.models.User;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import java.io.Serial;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+@NoArgsConstructor
+@Data
+public class AuthUserDetails implements UserDetails {
+    @Serial
+    private static final long serialVersionUID = 1L;
+    private Long id;
+    private String username;
+    private String email;
+
+    @JsonIgnore
+    private String password;
+    private Collection<? extends GrantedAuthority> authorities;
+
+    public AuthUserDetails(
+        Long id,
+        String username,
+        String email,
+        String password,
+        Collection<? extends GrantedAuthority> authorities
+    ) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.authorities = authorities;
+    }
+
+    public static AuthUserDetails build(User user) {
+        List<GrantedAuthority> authorities = user.getRoles()
+            .stream()
+            .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+            .collect(Collectors.toList());
+
+        return new AuthUserDetails(
+            user.getId(),
+            user.getUsername(),
+            user.getEmail(),
+            user.getPassword(),
+            authorities
+        );
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if(this == object) {
+            return true;
+        }
+
+        if(object == null || getClass() != object.getClass()) {
+            return false;
+        }
+
+        AuthUserDetails user = (AuthUserDetails)object;
+        return Objects.equals(this.id, user.id);
+    }
+}

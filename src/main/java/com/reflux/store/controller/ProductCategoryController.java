@@ -40,7 +40,11 @@ public class ProductCategoryController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ProductCategoryDto> updateCategory(@Valid @RequestBody ProductCategoryDto productCategoryDto, @PathVariable Long id) {
+    public ResponseEntity<ProductCategoryDto> updateCategory(
+        @Valid
+        @RequestBody ProductCategoryDto productCategoryDto,
+        @PathVariable Long id
+    ) {
         ProductCategoryDto savedCategory = categoryService.updateCategory(productCategoryDto, id);
         return ResponseEntity.status(HttpStatus.OK).body(savedCategory);
     }

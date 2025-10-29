@@ -87,7 +87,7 @@ public class ProductService implements ProductServiceInterface {
         ProductCategory category =  productCategoryRepository.findById(productCategoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product category not found"));
 
-        List<Product> products = productRepository.findByProductCategory(category);
+        List<Product> products = productRepository.findByCategory(category);
         List<ProductDto> productDtos = products.stream()
                 .map(product -> modelMapper.map(product, ProductDto.class))
                 .toList();
