@@ -4,7 +4,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -35,7 +34,6 @@ public class User {
     private String password;
 
     @NotBlank
-    @Email
     @Column(name = "email")
     private String email;
 
@@ -45,23 +43,40 @@ public class User {
         this.email = email;
     }
 
+    @Setter
+    @Getter
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
-        name = "roles",
+        name = "user_roles",
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "id")
     )
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    @OneToMany(
+        mappedBy = "user",
+        fetch = FetchType.EAGER,
+        cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+        orphanRemoval = true
+    )
     private List<Address> addresses = new ArrayList<>();
 
     @ToString.Exclude
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-        name = "products",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "id")
+    @OneToOne(
+        mappedBy = "user",
+        cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+        },
+        orphanRemoval = true
+    )
+    private Cart cart;
+
+    @ToString.Exclude
+    @OneToMany(
+        mappedBy = "user",
+        fetch = FetchType.EAGER,
+        cascade = {CascadeType.PERSIST, CascadeType.MERGE}
     )
     private Set<Product> products = new HashSet<>();
 }

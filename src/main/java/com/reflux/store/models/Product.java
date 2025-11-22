@@ -3,6 +3,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Setter
 @Getter
 @Entity
@@ -48,5 +51,20 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "product_category_id")
     private ProductCategory category;
+
+    @ManyToOne
+    @JoinColumn(name = "seller_id")
+    private User user;
+
+    @OneToMany(
+        mappedBy = "product",
+        cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+        },
+        fetch = FetchType.EAGER,
+        orphanRemoval = true
+    )
+    private List<CartItem> cartItems = new ArrayList<>();
 
 }

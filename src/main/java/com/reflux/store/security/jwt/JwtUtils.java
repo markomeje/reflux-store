@@ -1,13 +1,18 @@
 package com.reflux.store.security.jwt;
+import com.reflux.store.security.AuthUserDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.WebUtils;
+
 import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
@@ -22,6 +27,9 @@ public class JwtUtils {
     @Value("${spring.app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
+    @Value("${spring.app.jwtCookieName}")
+    private String jwtCookieName;
+
     public String getJwtFromHeader(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         logger.debug("Authorization Header: {}", bearerToken);
@@ -32,8 +40,7 @@ public class JwtUtils {
         return null;
     }
 
-    public String generateTokenFromUsername(UserDetails userDetails) {
-        String username = userDetails.getUsername();
+    public String generateTokenFromUsername(String username) {
         return Jwts.builder()
             .subject(username)
             .issuedAt(new Date())
@@ -51,16 +58,43 @@ public class JwtUtils {
             .getSubject();
     }
 
+    public String getJwtFromCookie(HttpServletRequest request) {
+        Cookie cookie = WebUtils.getCookie(request, this.jwtCookieName);
+        if (cookie != null) {
+            return cookie.getValue();
+        }
+
+        return null;
+    }
+
+    public ResponseCookie generateJwtCookie(AuthUserDetails userDetails) {
+        String jwt = this.generateTokenFromUsername(userDetails.getUsername());
+        return ResponseCookie.from(jwtCookieName, jwt)
+            .path("/api")
+            .maxAge(24 * 60 * 60)
+            .httpOnly(false)
+            .build();
+    }
+
+    public ResponseCookie getCleanJwtCookie() {
+        return ResponseCookie.from(jwtCookieName, "")
+            .path("/api")
+            .build();
+    }
+
     private Key key() {
         return Keys.hmacShaKeyFor(
-                Decoders.BASE64.decode(jwtSecret)
+            Decoders.BASE64.decode(jwtSecret)
         );
     }
 
     public boolean validateJwtToken(String authToken) {
         try {
-            System.out.println("Validate");
-            Jwts.parser().verifyWith((SecretKey) key()).build().parseSignedClaims(authToken);
+            Jwts.parser()
+                .verifyWith((SecretKey) key())
+                .build()
+                .parseSignedClaims(authToken);
+
             return true;
         } catch (MalformedJwtException e) {
             logger.error("Invalid JWT token: {}", e.getMessage());

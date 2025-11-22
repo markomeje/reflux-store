@@ -8,6 +8,7 @@ import java.util.List;
 @Setter
 @Getter
 @Entity
+@Table(name = "product_categories")
 public class ProductCategory {
 
     @Id

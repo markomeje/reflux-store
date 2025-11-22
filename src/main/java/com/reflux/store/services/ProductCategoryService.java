@@ -16,10 +16,12 @@ import java.util.List;
 public class ProductCategoryService implements ProductCategoryServiceInterface {
 
     private final ProductCategoryRepository productCategoryRepository;
-
     private final ModelMapper modelMapper;
 
-    public ProductCategoryService(ProductCategoryRepository productCategoryRepository, ModelMapper modelMapper) {
+    public ProductCategoryService(
+        ProductCategoryRepository productCategoryRepository,
+        ModelMapper modelMapper
+    ) {
         this.productCategoryRepository = productCategoryRepository;
         this.modelMapper = modelMapper;
     }
