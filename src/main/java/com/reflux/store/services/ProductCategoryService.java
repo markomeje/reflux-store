@@ -40,14 +40,14 @@ public class ProductCategoryService implements ProductCategoryServiceInterface {
             .map(category -> modelMapper.map(category, ProductCategoryDto.class))
             .toList();
 
-        ProductCategoryResponse productCategoryResponse = new ProductCategoryResponse();
-        productCategoryResponse.setContent(categoryDtos);
-        productCategoryResponse.setPage(categoryPage.getNumber());
-        productCategoryResponse.setSize(categoryPage.getSize());
-        productCategoryResponse.setTotalElements(categoryPage.getTotalElements());
-        productCategoryResponse.setTotalPages(categoryPage.getTotalPages());
-        productCategoryResponse.setLastPage(categoryPage.isLast());
-        return productCategoryResponse;
+        ProductCategoryResponse categoryResponse = new ProductCategoryResponse();
+        categoryResponse.setContent(categoryDtos);
+        categoryResponse.setPage(categoryPage.getNumber());
+        categoryResponse.setSize(categoryPage.getSize());
+        categoryResponse.setTotalElements(categoryPage.getTotalElements());
+        categoryResponse.setTotalPages(categoryPage.getTotalPages());
+        categoryResponse.setLastPage(categoryPage.isLast());
+        return categoryResponse;
     }
 
     @Override

@@ -1,12 +1,15 @@
 package com.reflux.store.services;
+import com.reflux.store.dto.cart.CartDto;
 import com.reflux.store.dto.product.ProductDto;
 import com.reflux.store.exception.ApiException;
 import com.reflux.store.exception.ResourceNotFoundException;
 import com.reflux.store.interfaces.ProductServiceInterface;
+import com.reflux.store.models.Cart;
 import com.reflux.store.models.Product;
 import com.reflux.store.models.ProductCategory;
 import com.reflux.store.repositories.ProductCategoryRepository;
 import com.reflux.store.repositories.ProductRepository;
+import com.reflux.store.repositories.cart.CartRepository;
 import com.reflux.store.response.product.ProductResponse;
 import com.reflux.store.handler.FileHandler;
 import org.modelmapper.ModelMapper;
@@ -23,21 +26,27 @@ import java.util.List;
 @Service
 public class ProductService implements ProductServiceInterface {
 
+    private final CartRepository cartRepository;
     private final ProductCategoryRepository productCategoryRepository;
     private final ModelMapper modelMapper;
     private final ProductRepository productRepository;
+    private final CartService cartService;
 
     @Value("${project.image.path}")
-    private String path;
+    private String imageUploadDir;
 
     public ProductService(
-        ModelMapper modelMapper,
+        CartRepository cartRepository,
         ProductCategoryRepository productCategoryRepository,
-        ProductRepository productRepository
+        ModelMapper modelMapper,
+        ProductRepository productRepository,
+        CartService cartService
     ) {
-        this.modelMapper = modelMapper;
+        this.cartRepository = cartRepository;
         this.productCategoryRepository = productCategoryRepository;
+        this.modelMapper = modelMapper;
         this.productRepository = productRepository;
+        this.cartService = cartService;
     }
 
     @Override
@@ -48,10 +57,10 @@ public class ProductService implements ProductServiceInterface {
 
         List<Product> products = pageProducts.getContent();
         List<ProductDto> productDtos = products.stream()
-                .map(product -> modelMapper.map(product, ProductDto.class))
-                .toList();
+            .map(product -> modelMapper.map(product, ProductDto.class))
+            .toList();
 
-        ProductResponse  productResponse = new ProductResponse();
+        ProductResponse productResponse = new ProductResponse();
         productResponse.setContent(productDtos);
         productResponse.setPageNumber(pageProducts.getNumber());
         productResponse.setPageSize(pageProducts.getSize());
@@ -69,7 +78,7 @@ public class ProductService implements ProductServiceInterface {
         }
 
         productCategoryRepository.findById(productCategoryId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product category not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Product category not found"));
 
         productDto.setProductCategoryId(productCategoryId);
         double discount = (productDto.getDiscount() * 0.01) * productDto.getPrice();
@@ -85,12 +94,12 @@ public class ProductService implements ProductServiceInterface {
     @Override
     public ProductResponse getProductsByCategory(Long productCategoryId) {
         ProductCategory category =  productCategoryRepository.findById(productCategoryId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product category not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Product category not found"));
 
         List<Product> products = productRepository.findByCategory(category);
         List<ProductDto> productDtos = products.stream()
-                .map(product -> modelMapper.map(product, ProductDto.class))
-                .toList();
+            .map(product -> modelMapper.map(product, ProductDto.class))
+            .toList();
 
         ProductResponse  productResponse = new ProductResponse();
         productResponse.setContent(productDtos);
@@ -101,8 +110,8 @@ public class ProductService implements ProductServiceInterface {
     public ProductResponse searchProductsByKeyword(String keyword) {
         List<Product> products = productRepository.findByNameLikeIgnoreCase(keyword);
         List<ProductDto> productDtos = products.stream()
-                .map(product -> modelMapper.map(product, ProductDto.class))
-                .toList();
+            .map(product -> modelMapper.map(product, ProductDto.class))
+            .toList();
 
         ProductResponse  productResponse = new ProductResponse();
         productResponse.setContent(productDtos);
@@ -112,7 +121,7 @@ public class ProductService implements ProductServiceInterface {
     @Override
     public ProductDto updateProduct(Long productId, ProductDto productDto) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
         product.setName(productDto.getName());
         product.setPrice(productDto.getPrice());
@@ -120,15 +129,30 @@ public class ProductService implements ProductServiceInterface {
         product.setDiscount(productDto.getDiscount());
         product.setDescription(productDto.getDescription());
         product.setQuantity(productDto.getQuantity());
-
         productRepository.save(product);
+
+        List<Cart> carts = cartRepository.findCartsByProductId(productId);
+        List<CartDto> cartDtos = carts.stream().map(cart -> {
+            CartDto cartDto = modelMapper.map(cart, CartDto.class);
+            List<ProductDto> products = cart.getCartItems().stream().map(item ->
+                modelMapper.map(item.getProduct(), ProductDto.class)
+            ).toList();
+
+            cartDto.setProducts(products);
+            return cartDto;
+        }).toList();
+
+        cartDtos.forEach(cart -> cartService.updateProductInCarts(cart.getId(), productId));
         return modelMapper.map(product, ProductDto.class);
     }
 
     @Override
     public ProductDto deleteProduct(Long productId) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
+        List<Cart> carts = cartRepository.findCartsByProductId(productId);
+        carts.forEach(cart -> cartService.deleteCartProduct(cart.getId(), productId));
 
         productRepository.delete(product);
         return modelMapper.map(product, ProductDto.class);
@@ -137,9 +161,9 @@ public class ProductService implements ProductServiceInterface {
     @Override
     public ProductDto updateProductImage(Long productId, MultipartFile image) throws IOException {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
-        String filename = FileHandler.uploadImage(path, image);
+        String filename = FileHandler.uploadImage(imageUploadDir, image);
         product.setImage(filename);
         Product updatedProduct = productRepository.save(product);
         return modelMapper.map(updatedProduct, ProductDto.class);
