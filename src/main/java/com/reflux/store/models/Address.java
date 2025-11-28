@@ -3,17 +3,19 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Setter;
 
 @Entity
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "addresses")
 public class Address {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
 

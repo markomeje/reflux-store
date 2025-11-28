@@ -42,39 +42,6 @@ public class WebSecurityConfig {
         return new JwtAuthTokenFilter();
     }
 
-//    @Bean
-//    public DaoAuthenticationProvider daoAuthenticationProvider() {
-//        UserDetailsService userDetailsService = (UserDetailsService) this.authUserDetailsService;
-//        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
-//        authProvider.setPasswordEncoder(passwordEncoder());
-//        return authProvider;
-//    }
-
-//    @Bean
-//    public SecurityFilterChain securityFilterChainAlt(HttpSecurity http) throws Exception {
-//        String authEndpoint = "/api/auth/**";
-//        String docsEndpoint = "/docs/**";
-//        String publicEndpoint = "/api/public/**";
-//
-//        http.authorizeHttpRequests(
-//            auth -> auth.requestMatchers(authEndpoint).permitAll()
-//            .requestMatchers(docsEndpoint).permitAll()
-//            .requestMatchers(publicEndpoint).permitAll()
-//            .anyRequest()
-//            .authenticated()
-//        );
-//
-//        http.authenticationProvider(daoAuthenticationProvider());
-//        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-//        http.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler));
-//        http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
-//        http.csrf(AbstractHttpConfigurer::disable);
-//
-//        http.addFilterBefore(jwtAuthTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-//        http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
-//        return http.build();
-//    }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
@@ -131,7 +98,7 @@ public class WebSecurityConfig {
                 userRepository.save(seller1);
             }
 
-            if(!userRepository.existsByUsername("admin")) {
+            if(!userRepository.existsByUsername("admin1")) {
                 User admin1 = new User("admin1", "admin1@example.com", passwordEncoder.encode("password3"));
                 userRepository.save(admin1);
             }
