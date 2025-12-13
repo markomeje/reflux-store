@@ -1,4 +1,4 @@
-package com.reflux.store.controller;
+package com.reflux.store.controllers;
 import com.reflux.store.dto.address.AddressDto;
 import com.reflux.store.models.User;
 import com.reflux.store.security.AuthSecurity;

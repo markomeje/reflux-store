@@ -7,7 +7,7 @@ import com.reflux.store.interfaces.CartServiceInterface;
 import com.reflux.store.models.Cart;
 import com.reflux.store.models.CartItem;
 import com.reflux.store.models.Product;
-import com.reflux.store.repositories.ProductRepository;
+import com.reflux.store.repositories.product.ProductRepository;
 import com.reflux.store.repositories.cart.CartItemRepository;
 import com.reflux.store.repositories.cart.CartRepository;
 import com.reflux.store.security.AuthSecurity;

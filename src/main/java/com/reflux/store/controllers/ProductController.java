@@ -1,4 +1,4 @@
-package com.reflux.store.controller;
+package com.reflux.store.controllers;
 import com.reflux.store.config.PaginationConstants;
 import com.reflux.store.dto.product.ProductDto;
 import com.reflux.store.response.product.ProductResponse;

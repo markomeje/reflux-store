@@ -5,7 +5,7 @@ import com.reflux.store.interfaces.ProductCategoryServiceInterface;
 import com.reflux.store.models.ProductCategory;
 import com.reflux.store.dto.product.ProductCategoryDto;
 import com.reflux.store.response.product.ProductCategoryResponse;
-import com.reflux.store.repositories.ProductCategoryRepository;
+import com.reflux.store.repositories.product.ProductCategoryRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

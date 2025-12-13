@@ -1,4 +1,4 @@
-package com.reflux.store.controller;
+package com.reflux.store.controllers;
 import com.reflux.store.enums.UserRoleEnum;
 import com.reflux.store.exception.ResourceNotFoundException;
 import com.reflux.store.models.Role;
@@ -11,7 +11,6 @@ import com.reflux.store.response.auth.UserInfoResponse;
 import com.reflux.store.security.AuthUserDetails;
 import com.reflux.store.security.jwt.JwtUtils;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -38,7 +37,6 @@ public class AuthenticationController {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
     public AuthenticationController(
         AuthenticationManager authenticationManager,
         UserRepository userRepository,

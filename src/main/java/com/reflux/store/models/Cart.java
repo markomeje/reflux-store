@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +34,5 @@ public class Cart {
         orphanRemoval = true
     )
     private List<CartItem> cartItems = new ArrayList<>();
-
     private Double totalPrice = 0.0;
 }

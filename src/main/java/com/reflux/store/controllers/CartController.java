@@ -1,4 +1,4 @@
-package com.reflux.store.controller;
+package com.reflux.store.controllers;
 import com.reflux.store.dto.cart.CartDto;
 import com.reflux.store.security.AuthSecurity;
 import com.reflux.store.services.CartService;

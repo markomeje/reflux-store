@@ -51,7 +51,6 @@ public class AddressService implements AddressServiceInterface {
     public AddressDto getAddress(Long addressId) {
         Address address = addressRepository.findById(addressId)
            .orElseThrow(() -> new ResourceNotFoundException("Address not found"));
-
         return modelMapper.map(address, AddressDto.class);
     }
 
